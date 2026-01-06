@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Clock, Users, Star, Play, ArrowRight, Check } from "lucide-react";
+import { Clock, Users, Star, Play, ArrowRight, ChevronLeft, Check } from "lucide-react";
 import { useCourses } from "@/contexts/CourseContext";
 import { toast } from "sonner";
 
-const Courses = () => {
+const AllCoursesPage = () => {
   const navigate = useNavigate();
   const { courses, enrollInCourse, isEnrolled } = useCourses();
 
@@ -16,37 +16,38 @@ const Courses = () => {
       toast.success("Successfully enrolled!", {
         description: "Course added to your dashboard"
       });
-    } else {
-      navigate(`/course/${courseId}`);
     }
   };
 
   return (
-    <section className="py-24 bg-muted/30" id="courses">
-      <div className="container px-4">
-        {/* Section Header */}
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
+        <div className="container flex items-center justify-between h-16 px-4">
+          <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
+            <ChevronLeft className="w-4 h-4" />
+            Home
+          </Button>
+          <Button variant="hero" onClick={() => navigate("/dashboard")}>
+            My Dashboard
+          </Button>
+        </div>
+      </header>
+
+      <div className="container px-4 py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12"
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
         >
-          <div>
-            <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
-              Popular <span className="gradient-text">Courses</span>
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-xl">
-              Explore our top-rated courses taught by industry experts
-            </p>
-          </div>
-          <Button variant="outline" className="gap-2 self-start md:self-auto" onClick={() => navigate("/courses")}>
-            View All Courses
-            <ArrowRight className="w-4 h-4" />
-          </Button>
+          <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
+            Explore Our <span className="gradient-text">Courses</span>
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+            Start learning for free with our curated collection of courses
+          </p>
         </motion.div>
 
-        {/* Courses Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map((course, index) => {
             const enrolled = isEnrolled(course.id);
@@ -55,8 +56,7 @@ const Courses = () => {
               <motion.div
                 key={course.id}
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="group cursor-pointer"
                 onClick={() => navigate(`/course/${course.id}`)}
@@ -133,8 +133,8 @@ const Courses = () => {
           })}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
-export default Courses;
+export default AllCoursesPage;

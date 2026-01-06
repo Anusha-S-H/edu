@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Play, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface CourseCardProps {
+  id: number;
   title: string;
   instructor: string;
   progress: number;
@@ -11,9 +13,14 @@ interface CourseCardProps {
   timeLeft: string;
 }
 
-const CourseCard = ({ title, instructor, progress, image, nextLesson, timeLeft }: CourseCardProps) => {
+const CourseCard = ({ id, title, instructor, progress, image, nextLesson, timeLeft }: CourseCardProps) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="group rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+    <div 
+      className="group rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+      onClick={() => navigate(`/course/${id}`)}
+    >
       {/* Image */}
       <div className="relative h-32 overflow-hidden">
         <img

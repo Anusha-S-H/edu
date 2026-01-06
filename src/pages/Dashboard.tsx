@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { 
   Flame, Trophy, Target, Clock, BookOpen, Play, 
   Brain, TrendingUp, Calendar, Bell, ChevronRight,
-  Zap, Star, Award, BarChart3
+  Zap, Star, Award, BarChart3, BookOpenCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -12,8 +13,12 @@ import CourseCard from "@/components/dashboard/CourseCard";
 import QuickStats from "@/components/dashboard/QuickStats";
 import UpcomingQuizzes from "@/components/dashboard/UpcomingQuizzes";
 import RecommendedCourses from "@/components/dashboard/RecommendedCourses";
+import { useCourses } from "@/contexts/CourseContext";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const { enrolledCourses, courses } = useCourses();
+
   return (
     <DashboardLayout>
       <div className="p-6 lg:p-8 space-y-8">
@@ -29,17 +34,19 @@ const Dashboard = () => {
               Welcome back, Alex! 👋
             </h1>
             <p className="text-muted-foreground">
-              You're on a roll! Keep up the great work.
+              {enrolledCourses.length > 0 
+                ? "You're on a roll! Keep up the great work." 
+                : "Start your learning journey today!"}
             </p>
           </div>
-          <Button variant="hero" className="self-start md:self-auto">
-            <Play className="w-4 h-4" />
-            Continue Learning
+          <Button variant="hero" className="self-start md:self-auto" onClick={() => navigate("/courses")}>
+            <BookOpenCheck className="w-4 h-4" />
+            Browse Courses
           </Button>
         </motion.div>
 
         {/* Stats Row */}
-        <QuickStats />
+        <QuickStats enrolledCount={enrolledCourses.length} />
 
         {/* Main Grid */}
         <div className="grid lg:grid-cols-3 gap-6">
@@ -53,30 +60,41 @@ const Dashboard = () => {
               className="bg-card border border-border rounded-2xl p-6"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-display font-bold">Continue Learning</h2>
-                <Button variant="ghost" size="sm">
+                <h2 className="text-xl font-display font-bold">
+                  {enrolledCourses.length > 0 ? "Continue Learning" : "Get Started"}
+                </h2>
+                <Button variant="ghost" size="sm" onClick={() => navigate("/courses")}>
                   View All <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
               
-              <div className="grid md:grid-cols-2 gap-4">
-                <CourseCard
-                  title="Advanced React Patterns"
-                  instructor="Sarah Johnson"
-                  progress={68}
-                  image="https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=200&fit=crop"
-                  nextLesson="Custom Hooks Deep Dive"
-                  timeLeft="2h 30m left"
-                />
-                <CourseCard
-                  title="Machine Learning Basics"
-                  instructor="Dr. Michael Chen"
-                  progress={42}
-                  image="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=200&fit=crop"
-                  nextLesson="Neural Networks Intro"
-                  timeLeft="4h 15m left"
-                />
-              </div>
+              {enrolledCourses.length > 0 ? (
+                <div className="grid md:grid-cols-2 gap-4">
+                  {enrolledCourses.slice(0, 2).map((course) => (
+                    <CourseCard
+                      key={course.id}
+                      id={course.id}
+                      title={course.title}
+                      instructor={course.instructor}
+                      progress={course.progress}
+                      image={course.image}
+                      nextLesson={course.modules[course.currentModuleIndex]?.title || "Complete!"}
+                      timeLeft={`${course.modules.length - course.currentModuleIndex} modules left`}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <BookOpen className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-bold mb-2">No courses enrolled yet</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Start learning by enrolling in a course
+                  </p>
+                  <Button variant="hero" onClick={() => navigate("/courses")}>
+                    Browse Courses
+                  </Button>
+                </div>
+              )}
             </motion.div>
 
             {/* Performance Chart */}
@@ -149,9 +167,9 @@ const Dashboard = () => {
             >
               <h3 className="text-lg font-display font-bold mb-4">Today's Goal</h3>
               <div className="flex items-center justify-center mb-4">
-                <ProgressRing progress={75} size={140} strokeWidth={10}>
+                <ProgressRing progress={enrolledCourses.length > 0 ? 75 : 0} size={140} strokeWidth={10}>
                   <div className="text-center">
-                    <div className="text-3xl font-display font-bold">75%</div>
+                    <div className="text-3xl font-display font-bold">{enrolledCourses.length > 0 ? 75 : 0}%</div>
                     <div className="text-xs text-muted-foreground">Complete</div>
                   </div>
                 </ProgressRing>
@@ -162,12 +180,12 @@ const Dashboard = () => {
                   <span className="font-medium">45m / 1h</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Lessons</span>
-                  <span className="font-medium">3 / 4</span>
+                  <span className="text-muted-foreground">Courses Enrolled</span>
+                  <span className="font-medium">{enrolledCourses.length}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">XP Earned</span>
-                  <span className="font-medium text-xp">+180 XP</span>
+                  <span className="font-medium text-xp">+{enrolledCourses.length * 50} XP</span>
                 </div>
               </div>
             </motion.div>
@@ -187,12 +205,16 @@ const Dashboard = () => {
                   <Trophy className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-display font-bold mb-1">New Badge Unlocked!</h3>
+                  <h3 className="font-display font-bold mb-1">
+                    {enrolledCourses.length > 0 ? "Keep Learning!" : "Start Your Journey!"}
+                  </h3>
                   <p className="text-sm text-white/80 mb-3">
-                    You've earned the "Quick Learner" badge for completing 5 courses.
+                    {enrolledCourses.length > 0 
+                      ? `You have ${enrolledCourses.length} course(s) in progress. Complete them to earn badges!`
+                      : "Enroll in your first course to earn XP and unlock achievements!"}
                   </p>
-                  <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white">
-                    View Achievements
+                  <Button size="sm" className="bg-white/20 hover:bg-white/30 text-white" onClick={() => navigate("/courses")}>
+                    {enrolledCourses.length > 0 ? "View Achievements" : "Explore Courses"}
                   </Button>
                 </div>
               </div>

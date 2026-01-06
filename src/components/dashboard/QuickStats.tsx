@@ -1,42 +1,46 @@
 import { motion } from "framer-motion";
 import { Clock, Zap, BookOpen, Trophy } from "lucide-react";
 
-const stats = [
-  {
-    icon: Clock,
-    label: "Study Time Today",
-    value: "2h 45m",
-    change: "+15%",
-    positive: true,
-    gradient: "gradient-primary",
-  },
-  {
-    icon: Zap,
-    label: "XP Earned",
-    value: "1,250",
-    change: "+320 today",
-    positive: true,
-    gradient: "gradient-xp",
-  },
-  {
-    icon: BookOpen,
-    label: "Courses Active",
-    value: "5",
-    change: "2 in progress",
-    positive: true,
-    gradient: "gradient-accent",
-  },
-  {
-    icon: Trophy,
-    label: "Quiz Score Avg",
-    value: "87%",
-    change: "+5%",
-    positive: true,
-    gradient: "gradient-streak",
-  },
-];
+interface QuickStatsProps {
+  enrolledCount?: number;
+}
 
-const QuickStats = () => {
+const QuickStats = ({ enrolledCount = 0 }: QuickStatsProps) => {
+  const stats = [
+    {
+      icon: Clock,
+      label: "Study Time Today",
+      value: "2h 45m",
+      change: "+15%",
+      positive: true,
+      gradient: "gradient-primary",
+    },
+    {
+      icon: Zap,
+      label: "XP Earned",
+      value: `${enrolledCount * 250 + 500}`,
+      change: `+${enrolledCount * 50} today`,
+      positive: true,
+      gradient: "gradient-xp",
+    },
+    {
+      icon: BookOpen,
+      label: "Courses Active",
+      value: String(enrolledCount),
+      change: `${enrolledCount > 0 ? enrolledCount : 0} in progress`,
+      positive: true,
+      gradient: "gradient-accent",
+    },
+    {
+      icon: Trophy,
+      label: "Quiz Score Avg",
+      value: enrolledCount > 0 ? "87%" : "0%",
+      change: enrolledCount > 0 ? "+5%" : "Start learning",
+      positive: true,
+      gradient: "gradient-streak",
+    },
+  ];
+
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, index) => (
