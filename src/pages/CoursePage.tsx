@@ -78,9 +78,16 @@ const CoursePage = () => {
                 <span className="text-muted-foreground">{enrolledCourse?.progress || 0}%</span>
               </div>
             )}
-            <Button variant="hero" onClick={() => navigate("/quiz/" + courseId)}>
-              Take Quiz
-            </Button>
+            {enrolledCourse?.progress === 100 ? (
+              <Button variant="hero" onClick={() => navigate("/dashboard")} className="gap-2">
+                <Award className="w-4 h-4" />
+                Go to Dashboard
+              </Button>
+            ) : (
+              <Button variant="hero" onClick={() => navigate("/quiz/" + courseId)}>
+                Take Quiz
+              </Button>
+            )}
           </div>
         </div>
       </header>

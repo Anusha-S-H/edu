@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, X, GraduationCap, Sparkles } from "lucide-react";
+import { Menu, X, GraduationCap, Sparkles, Moon, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -13,6 +14,24 @@ const navLinks = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+
+  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    if (element) {
+      const navbarHeight = 100; // Account for fixed navbar height
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - navbarHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+      setIsOpen(false);
+    }
+  };
 
   return (
     <motion.nav
@@ -39,6 +58,7 @@ const Navbar = () => {
                   <a
                     key={link.label}
                     href={link.href}
+                    onClick={(e) => handleSmoothScroll(e, link.href)}
                     className="text-muted-foreground hover:text-foreground transition-colors font-medium"
                   >
                     {link.label}
@@ -48,6 +68,17 @@ const Navbar = () => {
 
               {/* Desktop CTA */}
               <div className="hidden md:flex items-center gap-3">
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 rounded-lg hover:bg-muted transition-colors"
+                  aria-label="Toggle theme"
+                >
+                  {theme === 'dark' ? (
+                    <Sun className="w-5 h-5 text-yellow-500" />
+                  ) : (
+                    <Moon className="w-5 h-5 text-slate-700" />
+                  )}
+                </button>
                 <Link to="/login">
                   <Button variant="ghost">Log In</Button>
                 </Link>
@@ -84,14 +115,29 @@ const Navbar = () => {
                     <a
                       key={link.label}
                       href={link.href}
+                      onClick={(e) => handleSmoothScroll(e, link.href)}
                       className="block py-2 text-muted-foreground hover:text-foreground transition-colors font-medium"
-                      onClick={() => setIsOpen(false)}
                     >
                       {link.label}
                     </a>
                   ))}
-                  <div className="pt-4 flex flex-col gap-3">
-                    <Link to="/login" onClick={() => setIsOpen(false)}>
+                  <div className="pt-4 flex flex-col gap-3">                  <button
+                    onClick={toggleTheme}
+                    className="w-full p-2 rounded-lg hover:bg-muted transition-colors flex items-center justify-center gap-2"
+                    aria-label="Toggle theme"
+                  >
+                    {theme === 'dark' ? (
+                      <>
+                        <Sun className="w-5 h-5 text-yellow-500" />
+                        <span>Light Mode</span>
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="w-5 h-5 text-slate-700" />
+                        <span>Dark Mode</span>
+                      </>
+                    )}
+                  </button>                    <Link to="/login" onClick={() => setIsOpen(false)}>
                       <Button variant="ghost" className="w-full">Log In</Button>
                     </Link>
                     <Link to="/signup" onClick={() => setIsOpen(false)}>

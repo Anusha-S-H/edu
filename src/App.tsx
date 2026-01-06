@@ -12,6 +12,8 @@ import CoursePage from "./pages/CoursePage";
 import QuizPage from "./pages/QuizPage";
 import AllCoursesPage from "./pages/AllCoursesPage";
 import NotFound from "./pages/NotFound";
+import NoteSummarizerPage from "./pages/NoteSummarizerPage";
+import RandomQuizPage from "./pages/RandomQuizPage";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +32,8 @@ const App = () => (
             <Route path="/courses" element={<AllCoursesPage />} />
             <Route path="/course/:courseId" element={<CoursePage />} />
             <Route path="/quiz/:courseId" element={<QuizPage />} />
+            <Route path="/notes-summarizer" element={<NoteSummarizerPage />} />
+            <Route path="/random-quiz" element={<RandomQuizPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
