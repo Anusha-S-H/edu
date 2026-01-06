@@ -14,6 +14,7 @@ import AllCoursesPage from "./pages/AllCoursesPage";
 import NotFound from "./pages/NotFound";
 import NoteSummarizerPage from "./pages/NoteSummarizerPage";
 import RandomQuizPage from "./pages/RandomQuizPage";
+import AccessibleDashboard from "./pages/AccessibleDashboard";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/quiz/:courseId" element={<QuizPage />} />
             <Route path="/notes-summarizer" element={<NoteSummarizerPage />} />
             <Route path="/random-quiz" element={<RandomQuizPage />} />
+            <Route path="/accessible-dashboard" element={<AccessibleDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

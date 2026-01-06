@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Target, Users, Award, TrendingUp, Heart, Globe } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Target, Users, Award, TrendingUp, Heart, Globe, Eye, Brain, AudioLines } from "lucide-react";
 
 const stats = [
   { label: "Active Learners", value: "50K+", icon: Users },
@@ -29,7 +30,27 @@ const values = [
   },
 ];
 
+const accessibilityFeatures = [
+  {
+    icon: Eye,
+    title: "Visual Accessibility",
+    description: "High-contrast themes, scalable text, and screen-reader friendly labels to support low-vision learners.",
+  },
+  {
+    icon: Brain,
+    title: "Cognitive Support",
+    description: "Chunked lessons, distraction-free focus mode, and optional plain-language summaries for clearer comprehension.",
+  },
+  {
+    icon: AudioLines,
+    title: "Multimodal Learning",
+    description: "Audio narration, captions, and keyboard-first navigation so every learner can interact comfortably.",
+  },
+];
+
 const About = () => {
+  const navigate = useNavigate();
+
   return (
     <section id="about" className="py-24 relative overflow-hidden">
       {/* Background decoration */}
@@ -142,6 +163,66 @@ const About = () => {
             ))}
           </div>
         </div>
+
+        {/* Accessibility Commitment */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="bg-card border border-border rounded-3xl p-8 md:p-12 mb-16"
+        >
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
+            <div className="lg:w-1/2 space-y-4">
+              <h3 className="text-2xl md:text-3xl font-bold">Inclusive by Design</h3>
+              <p className="text-muted-foreground">
+                LearnFlow is built for all learners, including students who are visually impaired or navigating cognitive
+                differences. We follow WCAG-aligned practices and keep accessibility top-of-mind in every feature we ship.
+              </p>
+              <ul className="space-y-2 text-muted-foreground list-disc list-inside">
+                <li>One-tap toggle for high contrast and reduced motion experiences.</li>
+                <li>Keyboard-first shortcuts plus descriptive alt text and ARIA labels.</li>
+                <li>Focused study mode that minimizes clutter for lower cognitive load.</li>
+                <li>Downloadable transcripts, captions, and audio lessons for flexible consumption.</li>
+              </ul>
+            </div>
+            <div className="lg:w-1/2 grid md:grid-cols-2 gap-4">
+              {accessibilityFeatures.map((feature, index) => {
+                const isVisual = feature.title === "Visual Accessibility";
+
+                return (
+                  <motion.button
+                    key={feature.title}
+                    type="button"
+                    onClick={() => isVisual && navigate("/accessible-dashboard")}
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.08 }}
+                    className="bg-muted/40 rounded-2xl p-5 border border-border text-left hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                    aria-label={
+                      isVisual
+                        ? "Open visual accessibility dashboard"
+                        : `${feature.title} details`
+                    }
+                  >
+                    <div className="w-10 h-10 mb-4 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <feature.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <h4 className="text-lg font-semibold mb-2">{feature.title}</h4>
+                    <p className="text-sm text-muted-foreground">{feature.description}</p>
+                    {isVisual && (
+                      <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                        Explore dashboard
+                        <span aria-hidden>→</span>
+                      </span>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
 
         {/* Team Section */}
         <motion.div

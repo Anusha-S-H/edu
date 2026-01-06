@@ -200,6 +200,23 @@
     @apply transition-all duration-300 ease-out;
   }
 
+  .high-contrast {
+    /* High-contrast palette for accessibility */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 100%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 92%;
+    --primary: 51 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --accent: 195 100% 50%;
+    --accent-foreground: 0 0% 0%;
+    --border: 0 0% 30%;
+    --ring: 51 100% 50%;
+    color-scheme: dark;
+  }
+
   .hover-lift:hover {
     @apply -translate-y-1 shadow-xl;
   }

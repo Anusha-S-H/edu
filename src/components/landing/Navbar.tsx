@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, X, GraduationCap, Sparkles, Moon, Sun } from "lucide-react";
+import { Menu, X, GraduationCap, Sparkles, Moon, Sun, Contrast } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -15,6 +15,29 @@ const navLinks = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const [highContrast, setHighContrast] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("highContrastEnabled");
+    const enabled = saved === "true";
+    setHighContrast(enabled);
+    const root = document.documentElement;
+    if (enabled) root.classList.add("high-contrast");
+  }, []);
+
+  const toggleHighContrast = () => {
+    setHighContrast((prev) => {
+      const next = !prev;
+      const root = document.documentElement;
+      if (next) {
+        root.classList.add("high-contrast");
+      } else {
+        root.classList.remove("high-contrast");
+      }
+      localStorage.setItem("highContrastEnabled", String(next));
+      return next;
+    });
+  };
 
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -69,6 +92,15 @@ const Navbar = () => {
               {/* Desktop CTA */}
               <div className="hidden md:flex items-center gap-3">
                 <button
+                  onClick={toggleHighContrast}
+                  className="p-2 rounded-lg hover:bg-muted transition-colors flex items-center gap-2 text-sm font-semibold"
+                  aria-label="Toggle high contrast"
+                >
+                  <Contrast className="w-5 h-5 text-amber-500" />
+                  <span className="hidden xl:inline">High contrast</span>
+                  <span className="sr-only">Toggle high contrast mode</span>
+                </button>
+                <button
                   onClick={toggleTheme}
                   className="p-2 rounded-lg hover:bg-muted transition-colors"
                   aria-label="Toggle theme"
@@ -79,6 +111,12 @@ const Navbar = () => {
                     <Moon className="w-5 h-5 text-slate-700" />
                   )}
                 </button>
+                <Link to="/accessible-dashboard">
+                  <Button variant="secondary" className="gap-2">
+                    <Contrast className="w-4 h-4" />
+                    Visual Access
+                  </Button>
+                </Link>
                 <Link to="/login">
                   <Button variant="ghost">Log In</Button>
                 </Link>
@@ -121,23 +159,39 @@ const Navbar = () => {
                       {link.label}
                     </a>
                   ))}
-                  <div className="pt-4 flex flex-col gap-3">                  <button
-                    onClick={toggleTheme}
-                    className="w-full p-2 rounded-lg hover:bg-muted transition-colors flex items-center justify-center gap-2"
-                    aria-label="Toggle theme"
-                  >
-                    {theme === 'dark' ? (
-                      <>
-                        <Sun className="w-5 h-5 text-yellow-500" />
-                        <span>Light Mode</span>
-                      </>
-                    ) : (
-                      <>
-                        <Moon className="w-5 h-5 text-slate-700" />
-                        <span>Dark Mode</span>
-                      </>
-                    )}
-                  </button>                    <Link to="/login" onClick={() => setIsOpen(false)}>
+                  <div className="pt-4 flex flex-col gap-3">
+                    <button
+                      onClick={toggleHighContrast}
+                      className="w-full p-2 rounded-lg hover:bg-muted transition-colors flex items-center justify-center gap-2"
+                      aria-label="Toggle high contrast"
+                    >
+                      <Contrast className="w-5 h-5 text-amber-500" />
+                      <span>{highContrast ? "High contrast on" : "High contrast"}</span>
+                    </button>
+                    <Link to="/accessible-dashboard" onClick={() => setIsOpen(false)}>
+                      <Button variant="secondary" className="w-full gap-2">
+                        <Contrast className="w-4 h-4" />
+                        Visual Access
+                      </Button>
+                    </Link>
+                    <button
+                      onClick={toggleTheme}
+                      className="w-full p-2 rounded-lg hover:bg-muted transition-colors flex items-center justify-center gap-2"
+                      aria-label="Toggle theme"
+                    >
+                      {theme === 'dark' ? (
+                        <>
+                          <Sun className="w-5 h-5 text-yellow-500" />
+                          <span>Light Mode</span>
+                        </>
+                      ) : (
+                        <>
+                          <Moon className="w-5 h-5 text-slate-700" />
+                          <span>Dark Mode</span>
+                        </>
+                      )}
+                    </button>
+                    <Link to="/login" onClick={() => setIsOpen(false)}>
                       <Button variant="ghost" className="w-full">Log In</Button>
                     </Link>
                     <Link to="/signup" onClick={() => setIsOpen(false)}>
